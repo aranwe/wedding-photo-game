@@ -56,34 +56,55 @@ alter table public.players enable row level security;
 alter table public.tasks enable row level security;
 alter table public.submissions enable row level security;
 
-create policy "config readable by everyone" on public.config
-  for select using (true);
-
-create policy "teams readable by everyone" on public.teams
-  for select using (true);
-create policy "anyone can create team" on public.teams
-  for insert with check (true);
-create policy "anyone can update team" on public.teams
-  for update using (true);
-
-create policy "players readable by everyone" on public.players
-  for select using (true);
-create policy "anyone can create player" on public.players
-  for insert with check (true);
-create policy "anyone can update player" on public.players
-  for update using (true);
-
-create policy "tasks readable by everyone" on public.tasks
-  for select using (true);
-
-create policy "submissions readable by everyone" on public.submissions
-  for select using (true);
-create policy "anyone can create submission" on public.submissions
-  for insert with check (true);
-create policy "anyone can update submission" on public.submissions
-  for update using (true);
-create policy "anyone can delete submission" on public.submissions
-  for delete using (true);
+-- `create policy` has no `if not exists` — guard with existence checks so the
+-- migration stays re-runnable (prebuild applies it on every Vercel build).
+do $$
+begin
+  if not exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'config' and policyname = 'config readable by everyone') then
+    create policy "config readable by everyone" on public.config for select using (true);
+  end if;
+  if not exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'teams' and policyname = 'teams readable by everyone') then
+    create policy "teams readable by everyone" on public.teams for select using (true);
+  end if;
+  if not exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'teams' and policyname = 'anyone can create team') then
+    create policy "anyone can create team" on public.teams for insert with check (true);
+  end if;
+  if not exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'teams' and policyname = 'anyone can update team') then
+    create policy "anyone can update team" on public.teams for update using (true);
+  end if;
+  if not exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'players' and policyname = 'players readable by everyone') then
+    create policy "players readable by everyone" on public.players for select using (true);
+  end if;
+  if not exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'players' and policyname = 'anyone can create player') then
+    create policy "anyone can create player" on public.players for insert with check (true);
+  end if;
+  if not exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'players' and policyname = 'anyone can update player') then
+    create policy "anyone can update player" on public.players for update using (true);
+  end if;
+  if not exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'tasks' and policyname = 'tasks readable by everyone') then
+    create policy "tasks readable by everyone" on public.tasks for select using (true);
+  end if;
+  if not exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'submissions' and policyname = 'submissions readable by everyone') then
+    create policy "submissions readable by everyone" on public.submissions for select using (true);
+  end if;
+  if not exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'submissions' and policyname = 'anyone can create submission') then
+    create policy "anyone can create submission" on public.submissions for insert with check (true);
+  end if;
+  if not exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'submissions' and policyname = 'anyone can update submission') then
+    create policy "anyone can update submission" on public.submissions for update using (true);
+  end if;
+  if not exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'submissions' and policyname = 'anyone can delete submission') then
+    create policy "anyone can delete submission" on public.submissions for delete using (true);
+  end if;
+end $$;
 
 -- Realtime: broadcast submission changes to teammates.
-alter publication supabase_realtime add table public.submissions;
+do $$
+begin
+  if not exists (
+    select 1 from pg_publication_tables
+    where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'submissions'
+  ) then
+    alter publication supabase_realtime add table public.submissions;
+  end if;
+end $$;
