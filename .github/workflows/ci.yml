@@ -37,29 +37,4 @@ jobs:
           R2_SECRET_ACCESS_KEY: placeholder
           R2_BUCKET_NAME: placeholder
           NEXT_PUBLIC_R2_PUBLIC_URL: https://pub-placeholder.r2.dev
-
-  supabase:
-    name: Deploy Supabase schema
-    needs: build
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: supabase/setup-cli@v1
-        with:
-          version: latest
-
-      - name: Push migrations
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
-        run: |
-          supabase link --project-ref btcamyokkmxlbyfqpggq
-          supabase db push --linked
-
-      - name: Seed
-        env:
-          POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
-        run: psql "$POSTGRES_URL" -v ON_ERROR_STOP=1 -f supabase/seed.sql
+          # POSTGRES_URL intentionally unset — prebuild skips DB bootstrap in CI

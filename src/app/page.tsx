@@ -1,5 +1,8 @@
 "use client";
 
+// This page is a fully client-side SPA — never prerender it at build time.
+export const dynamic = "force-dynamic";
+
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Gamepad2, History, Settings } from "lucide-react";
