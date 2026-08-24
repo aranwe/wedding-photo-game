@@ -94,7 +94,8 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: "Proba Pro", "Helvetica Neue", Arial, sans-serif;
+    font-family: var(--font-body), "Helvetica Neue", Arial, sans-serif;
+    font-weight: 300;
   }
   h1,
   h2,
@@ -102,6 +103,23 @@
   h4,
   h5,
   h6 {
-    font-family: "Minion Pro", Georgia, "Times New Roman", serif;
+    font-family: var(--font-heading), Georgia, "Times New Roman", serif;
+    font-weight: 500;
+  }
+  /* Only Medium (headings) and Light (body) exist — force those weights everywhere. */
+  strong,
+  b,
+  .font-semibold,
+  .font-bold,
+  .font-extrabold,
+  button,
+  label {
+    font-weight: inherit;
+  }
+  h1 strong,
+  h2 strong,
+  h3 strong,
+  button strong {
+    font-weight: inherit;
   }
 }
