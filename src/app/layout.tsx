@@ -4,6 +4,7 @@ import "./globals.css";
 import { I18nProvider } from "@/lib/i18n";
 import { ConfigProvider } from "@/lib/config";
 import { Toaster } from "@/components/ui/sonner";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,6 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <SpeedInsights/>
         <I18nProvider>
           <ConfigProvider>{children}</ConfigProvider>
         </I18nProvider>
