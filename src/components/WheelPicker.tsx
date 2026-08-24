@@ -1,7 +1,7 @@
 "use client";
 
 import { CheckCircle2 } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Task, TaskState } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -17,6 +17,8 @@ interface Props {
 const ITEM_H = 56; // px per row
 const VISIBLE = 5; // 2 above, center, 2 below
 const PAD = ((VISIBLE - 1) / 2) * ITEM_H; // spacer so first/last row can center
+const REPEATS = 5; // 5 repeated sets for smooth infinite loop
+const MID_SET = Math.floor(REPEATS / 2);
 
 function rowClass(distance: number): string {
   if (distance === 0) return "text-base font-medium opacity-100";
@@ -43,8 +45,26 @@ export default function WheelPicker({
   startIndex = 0,
 }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [selectedIndex, setSelectedIndex] = useState(startIndex);
+  const [absIndex, setAbsIndex] = useState(0);
   const settleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isAdjusting = useRef(false);
+
+  const L = tasks.length;
+
+  const repeatedTasks = useMemo(() => {
+    if (L === 0) return [];
+    const items: { key: string; task: Task; realIndex: number }[] = [];
+    for (let r = 0; r < REPEATS; r++) {
+      for (let i = 0; i < L; i++) {
+        items.push({
+          key: `${r}-${tasks[i].id}`,
+          task: tasks[i],
+          realIndex: i,
+        });
+      }
+    }
+    return items;
+  }, [tasks, L]);
 
   const scrollToIndex = useCallback((index: number, smooth = true) => {
     scrollRef.current?.scrollTo({
@@ -53,44 +73,67 @@ export default function WheelPicker({
     });
   }, []);
 
-  // Jump to the initial (random) row once tasks are loaded.
+  // Jump to middle set + startIndex on mount/init
   const didInit = useRef(false);
   useEffect(() => {
-    if (didInit.current || tasks.length === 0) return;
+    if (didInit.current || L === 0) return;
     didInit.current = true;
-    scrollToIndex(startIndex, false);
-    setSelectedIndex(startIndex);
-    const task = tasks[startIndex];
+    const initialAbs = MID_SET * L + (startIndex % L);
+    scrollToIndex(initialAbs, false);
+    setAbsIndex(initialAbs);
+    const task = tasks[startIndex % L];
     if (task) onSelect(task.id);
-  }, [tasks, startIndex, scrollToIndex, onSelect]);
+  }, [L, startIndex, tasks, onSelect, scrollToIndex]);
 
   const handleScroll = useCallback(() => {
     const el = scrollRef.current;
-    if (!el) return;
-    const index = Math.round(el.scrollTop / ITEM_H);
-    const clamped = Math.max(0, Math.min(tasks.length - 1, index));
-    setSelectedIndex((prev) => {
-      if (prev === clamped) return prev;
-      const task = tasks[clamped];
-      if (task) onSelect(task.id);
-      return clamped;
-    });
+    if (!el || L === 0 || isAdjusting.current) return;
 
-    // Mouse wheel can land between rows — settle onto an exact snap.
+    const currentAbs = Math.round(el.scrollTop / ITEM_H);
+    setAbsIndex(currentAbs);
+
+    const realIndex = ((currentAbs % L) + L) % L;
+    const task = tasks[realIndex];
+    if (task) onSelect(task.id);
+
+    // After scrolling settles, normalize to middle set if drifted too far near boundaries
     if (settleTimer.current) clearTimeout(settleTimer.current);
     settleTimer.current = setTimeout(() => {
-      if (el.scrollTop % ITEM_H !== 0) {
-        scrollToIndex(Math.round(el.scrollTop / ITEM_H));
+      if (!el) return;
+      const settledAbs = Math.round(el.scrollTop / ITEM_H);
+      const settledReal = ((settledAbs % L) + L) % L;
+
+      // If outside the central set (set 1 to REPEATS-2), silently recenter
+      if (settledAbs < L || settledAbs >= (REPEATS - 1) * L) {
+        isAdjusting.current = true;
+        const normalizedAbs = MID_SET * L + settledReal;
+        el.scrollTop = normalizedAbs * ITEM_H;
+        setAbsIndex(normalizedAbs);
+        requestAnimationFrame(() => {
+          isAdjusting.current = false;
+        });
+      } else if (el.scrollTop % ITEM_H !== 0) {
+        scrollToIndex(settledAbs, true);
       }
     }, 120);
-  }, [tasks, onSelect, scrollToIndex]);
+  }, [L, tasks, onSelect, scrollToIndex]);
 
   // Follow external selection changes (e.g. realtime updates).
   useEffect(() => {
-    if (!selectedId || !scrollRef.current) return;
-    const index = tasks.findIndex((t) => t.id === selectedId);
-    if (index >= 0 && index !== selectedIndex) scrollToIndex(index);
-  }, [selectedId, tasks, selectedIndex, scrollToIndex]);
+    if (!selectedId || !scrollRef.current || L === 0) return;
+    const targetReal = tasks.findIndex((t) => t.id === selectedId);
+    if (targetReal < 0) return;
+
+    const currentReal = ((absIndex % L) + L) % L;
+    if (targetReal !== currentReal) {
+      // Find the closest abs index matching targetReal
+      const diff = targetReal - currentReal;
+      const targetAbs = absIndex + diff;
+      scrollToIndex(targetAbs, true);
+    }
+  }, [selectedId, tasks, absIndex, L, scrollToIndex]);
+
+  if (L === 0) return null;
 
   return (
     <div className="relative" style={{ height: ITEM_H * VISIBLE }}>
@@ -110,12 +153,12 @@ export default function WheelPicker({
         style={{ scrollSnapType: "y mandatory" }}
       >
         <div style={{ height: PAD }} />
-        {tasks.map((task, i) => {
+        {repeatedTasks.map(({ key, task }, i) => {
           const state = states[task.id] ?? "free";
-          const distance = Math.abs(i - selectedIndex);
+          const distance = Math.abs(i - absIndex);
           return (
             <div
-              key={task.id}
+              key={key}
               className="flex items-center justify-center px-4"
               style={{ height: ITEM_H, scrollSnapAlign: "center" }}
             >
