@@ -67,6 +67,12 @@ export default function OnboardingForm({
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center max-w-sm mx-auto w-full px-6">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/logo.png"
+        alt={event.name}
+        className="mb-6 h-28 w-auto rounded-full"
+      />
       <h1 className="text-2xl font-bold text-primary text-center">
         {t("onboarding.title")}
       </h1>
