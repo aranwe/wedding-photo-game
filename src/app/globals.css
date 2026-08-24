@@ -50,13 +50,20 @@
 
 :root {
   /* Wedding theme colors — overridden at runtime from the `config` table. */
-  --primary-rgb: 165 54 39; /* #a53627 maroon */
-  --secondary-rgb: 165 54 39; /* #a53627 (single accent) */
   --cream: #faf7f4;
+  --navy: #183866;
+  --red: #a53627;
+  --warm: #f0ebe4;
+  --warm-dark: #e5ded6;
+  --warm-darker: #d8d0c6;
+  --accent: #b0956b;
+  --dark: #2c2825;
+  --muted: #7a7067;
+  --blue: #183866;
   --green: #5b612f;
-  --navy: #000080;
-  --red: 
-  --primary: rgb(var(--primary-rgb));
+  --green-light: #bdc695;
+  --pink: #f8dad9;
+  --primary: var(--red);
   --primary-foreground: oklch(0.985 0 0);
   --background: var(--cream);
   --foreground: var(--green);
@@ -65,7 +72,7 @@
   --popover: oklch(1 0 0);
   --popover-foreground: var(--green);
   --secondary: rgb(var(--secondary-rgb) / 0.08);
-  --secondary-foreground: rgb(var(--secondary-rgb));
+  --secondary-foreground: rgb(var(--red));
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
   --accent: rgb(var(--primary-rgb) / 0.08);
