@@ -68,7 +68,6 @@ export default function OnboardingForm({
   return (
     <div className="flex flex-1 flex-col items-center justify-center max-w-sm mx-auto w-full px-6">
       <picture>
-        <source srcSet="/logo.avif" type="image/avif" />
         <source srcSet="/logo.webp" type="image/webp" />
         <img
           src="/logo.png"
