@@ -3,7 +3,7 @@
 
 insert into public.config (key, value) values
   ('theme', '{"primary": "#a53627", "secondary": "#a53627"}'),
-  ('event', '{"name": "Bára & Matěj", "subtitle": "Svatební foto hra"}')
+  ('event', '{"partner1": "Bára", "and": "&", "partner2": "Matěj", "subtitle": "Svatební foto hra"}')
 on conflict (key) do update set value = excluded.value;
 
 insert into public.tasks (title_cs, sort_order) values

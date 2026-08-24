@@ -70,14 +70,14 @@ export default function OnboardingForm({
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src="/logo.png"
-        alt={event.name}
+        alt={`${event.partner1} ${event.and} ${event.partner2}`}
         className="mb-6 h-28 w-auto rounded-full"
       />
       <h1 className="text-2xl font-bold text-primary text-center">
         {t("onboarding.title")}
       </h1>
       <p className="mt-1 mb-8 text-sm text-muted-foreground text-center">
-        {event.name} · {t("onboarding.subtitle")}
+        {event.partner1} {event.and} {event.partner2} · {t("onboarding.subtitle")}
       </p>
 
       <div className="w-full space-y-4">

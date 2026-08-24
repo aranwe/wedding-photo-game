@@ -10,7 +10,12 @@ import { supabase } from "@/lib/supabase";
 import type { EventConfig, ThemeConfig } from "@/lib/types";
 
 const DEFAULT_THEME: ThemeConfig = { primary: "#800000", secondary: "#000080" };
-const DEFAULT_EVENT: EventConfig = { name: "Svatební foto hra", subtitle: "" };
+const DEFAULT_EVENT: EventConfig = {
+  partner1: "Bára",
+  and: "&",
+  partner2: "Matěj",
+  subtitle: "Svatební foto hra",
+};
 
 interface AppConfig {
   theme: ThemeConfig;

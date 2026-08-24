@@ -35,7 +35,9 @@ export interface ThemeConfig {
 }
 
 export interface EventConfig {
-  name: string;
+  partner1: string;
+  and: string;
+  partner2: string;
   subtitle: string;
 }
 
