@@ -15,7 +15,32 @@ interface Props {
   startIndex?: number;
 }
 
-const ITEM_H = 72; // px — must match item height below
+const ITEM_H = 56; // px per row
+const VISIBLE = 5; // rows visible: 2 above, center, 2 below
+
+/** Row styling by distance from center — closest = darkest. */
+function distanceClass(distance: number): string {
+  switch (distance) {
+    case 0:
+      return "text-base font-medium";
+    case 1:
+      return "text-sm opacity-60";
+    default:
+      return "text-sm opacity-30";
+  }
+}
+
+/** Task state color, applied at every distance (faded by opacity). */
+function stateClass(state: TaskState): string {
+  switch (state) {
+    case "completed":
+      return "text-green-700";
+    case "in-progress":
+      return "text-amber-600"; // muted yellow-orange
+    default:
+      return "text-foreground";
+  }
+}
 
 export default function WheelPicker({ tasks, states, selectedId, onSelect, startIndex = 0 }: Props) {
   const [emblaRef, emblaApi] = useEmblaCarousel({
@@ -24,7 +49,7 @@ export default function WheelPicker({ tasks, states, selectedId, onSelect, start
     containScroll: false,
     dragFree: false,
     startIndex,
-    watchDrag: true, // touch + mouse drag
+    duration: 20,
   });
   const [selectedIndex, setSelectedIndex] = useState(startIndex);
   const wheelCooldown = useRef(0);
@@ -47,12 +72,12 @@ export default function WheelPicker({ tasks, states, selectedId, onSelect, start
     };
   }, [emblaApi, onEmblaSelect]);
 
-  // Mouse wheel support — embla doesn't handle wheels out of the box.
+  // Mouse wheel — embla doesn't handle wheels out of the box.
   const onWheel = useCallback(
     (e: React.WheelEvent) => {
       if (!emblaApi) return;
       const now = Date.now();
-      if (now - wheelCooldown.current < 120) return;
+      if (now - wheelCooldown.current < 150) return;
       wheelCooldown.current = now;
       if (e.deltaY > 0) emblaApi.scrollNext();
       else if (e.deltaY < 0) emblaApi.scrollPrev();
@@ -70,39 +95,40 @@ export default function WheelPicker({ tasks, states, selectedId, onSelect, start
   }, [selectedId, tasks, emblaApi]);
 
   return (
-    // The highlight band lives INSIDE the overflow container so it moves with the wheel.
     <div
-      className="relative h-[216px] overflow-hidden select-none"
+      className="relative select-none"
+      style={{ height: ITEM_H * VISIBLE, touchAction: "none" }}
       ref={emblaRef}
       onWheel={onWheel}
-      style={{ touchAction: "pan-x" }} // let embla own vertical touch gestures
     >
-      {/* center highlight band */}
+      {/* center highlight band — overlays the middle row */}
       <div
-        className="pointer-events-none absolute left-0 right-0 top-1/2 z-10 -translate-y-1/2 rounded-xl border-2 border-primary/40 bg-accent/50"
+        className="pointer-events-none absolute left-0 right-0 top-1/2 z-10 -translate-y-1/2 rounded-xl border-2 border-primary/40 bg-accent/40"
         style={{ height: ITEM_H }}
       />
+      {/* top/bottom fade so rows visually dissolve at the edges */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-14 bg-gradient-to-b from-background to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-14 bg-gradient-to-t from-background to-transparent" />
+
       <div className="h-full cursor-grab active:cursor-grabbing">
         {tasks.map((task, i) => {
           const state = states[task.id] ?? "free";
-          const isCenter = i === selectedIndex;
+          const distance = Math.abs(i - selectedIndex);
           return (
             <div
               key={task.id}
-              className="flex items-center justify-center"
+              className="flex items-center justify-center overflow-hidden"
               style={{ height: ITEM_H }}
             >
               <span
                 className={cn(
-                  "relative z-20 flex items-center gap-2 text-center font-medium transition-all px-4",
-                  isCenter ? "text-lg" : "text-base opacity-40 text-muted-foreground",
-                  isCenter && state === "completed" && "text-green-700",
-                  isCenter && state === "in-progress" && "text-orange-500",
-                  isCenter && state === "free" && "text-foreground"
+                  "flex items-center gap-2 px-4 text-center transition-all duration-150",
+                  distanceClass(distance),
+                  stateClass(state)
                 )}
               >
-                {isCenter && state === "completed" && (
-                  <CheckCircle2 size={20} className="shrink-0" />
+                {state === "completed" && (
+                  <CheckCircle2 size={distance === 0 ? 20 : 16} className="shrink-0" />
                 )}
                 {task.title_cs}
               </span>
@@ -113,3 +139,4 @@ export default function WheelPicker({ tasks, states, selectedId, onSelect, start
     </div>
   );
 }
+
