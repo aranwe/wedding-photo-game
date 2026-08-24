@@ -10,6 +10,10 @@ const s3 = new S3Client({
     accessKeyId: process.env.R2_ACCESS_KEY_ID!,
     secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
   },
+  // R2 presigned PUTs break with the default CRC32 checksum headers added
+  // by aws-sdk v3.729+ (CORS preflight rejects x-amz-checksum-* headers).
+  requestChecksumCalculation: "WHEN_REQUIRED",
+  responseChecksumValidation: "WHEN_REQUIRED",
 });
 
 const ALLOWED_TYPES: Record<string, string> = {

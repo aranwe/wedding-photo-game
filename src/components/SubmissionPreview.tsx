@@ -41,8 +41,12 @@ export default function SubmissionPreview({
       if (!res.ok) throw new Error("presign failed");
       const { key, uploadUrl } = await res.json();
 
-      // 2) upload straight to R2
-      const put = await fetch(uploadUrl, { method: "PUT", body: blob });
+      // 2) upload straight to R2 — Content-Type must match the presigned one
+      const put = await fetch(uploadUrl, {
+        method: "PUT",
+        headers: { "Content-Type": blob.type || "image/jpeg" },
+        body: blob,
+      });
       if (!put.ok) throw new Error("upload failed");
 
       // 3) insert submission row — realtime broadcast updates teammates
