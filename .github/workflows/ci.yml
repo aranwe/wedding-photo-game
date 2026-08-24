@@ -31,7 +31,7 @@ jobs:
         run: npm run build
         env:
           NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-anon-key
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: placeholder-publishable-key
           R2_ACCOUNT_ID: placeholder
           R2_ACCESS_KEY_ID: placeholder
           R2_SECRET_ACCESS_KEY: placeholder
@@ -61,5 +61,5 @@ jobs:
 
       - name: Seed
         env:
-          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
-        run: psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f supabase/seed.sql
+          POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
+        run: psql "$POSTGRES_URL" -v ON_ERROR_STOP=1 -f supabase/seed.sql
