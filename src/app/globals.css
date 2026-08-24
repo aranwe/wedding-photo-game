@@ -50,8 +50,8 @@
 
 :root {
   /* Wedding theme colors — overridden at runtime from the `config` table. */
-  --primary-rgb: 128 0 0; /* #800000 maroon */
-  --secondary-rgb: 0 0 128; /* #000080 navy */
+  --primary-rgb: 165 54 39; /* #a53627 maroon */
+  --secondary-rgb: 165 54 39; /* #a53627 (single accent) */
   --primary: rgb(var(--primary-rgb));
   --primary-foreground: oklch(0.985 0 0);
   --background: oklch(1 0 0);
@@ -94,8 +94,14 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: "Proba Pro", "Helvetica Neue", Arial, sans-serif;
   }
-  html {
-    @apply font-sans;
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Minion Pro", Georgia, "Times New Roman", serif;
   }
 }

@@ -2,7 +2,7 @@
 -- Edit the tasks to taste before running. Safe to re-run (upserts).
 
 insert into public.config (key, value) values
-  ('theme', '{"primary": "#800000", "secondary": "#000080"}'),
+  ('theme', '{"primary": "#a53627", "secondary": "#a53627"}'),
   ('event', '{"name": "Bára & Matěj", "subtitle": "Svatební foto hra"}')
 on conflict (key) do update set value = excluded.value;
 
