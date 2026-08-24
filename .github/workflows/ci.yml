@@ -37,3 +37,22 @@ jobs:
           R2_SECRET_ACCESS_KEY: placeholder
           R2_BUCKET_NAME: placeholder
           NEXT_PUBLIC_R2_PUBLIC_URL: https://pub-placeholder.r2.dev
+
+  supabase:
+    name: Deploy Supabase schema
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Apply migrations + seed
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          echo "$SUPABASE_DB_URL" | grep -q . || { echo "::error::SUPABASE_DB_URL secret is not set"; exit 1; }
+          for f in supabase/migrations/*.sql supabase/seed.sql; do
+            echo "--- applying $f"
+            psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f "$f"
+          done
