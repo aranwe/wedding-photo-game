@@ -24,19 +24,37 @@ if (!url) {
 
 const sql = postgres(url, { max: 1, prepare: false });
 
-const files = [
-  ...readdirSync("supabase/migrations")
-    .filter((f) => f.endsWith(".sql"))
-    .sort()
-    .map((f) => join("supabase/migrations", f)),
-  "supabase/seed.sql",
-];
+// Ensure migration tracking table exists
+await sql`
+  create table if not exists public._schema_migrations (
+    name text primary key,
+    applied_at timestamptz not null default now()
+  );
+`;
 
-for (const file of files) {
-  const content = readFileSync(file, "utf8");
-  console.log(`[prebuild] applying ${file}`);
+const appliedRows = await sql`select name from public._schema_migrations`;
+const appliedSet = new Set(appliedRows.map((r) => r.name));
+
+const migrationFiles = readdirSync("supabase/migrations")
+  .filter((f) => f.endsWith(".sql"))
+  .sort();
+
+for (const file of migrationFiles) {
+  if (appliedSet.has(file)) {
+    console.log(`[prebuild] skipping already applied migration: ${file}`);
+    continue;
+  }
+  const content = readFileSync(join("supabase/migrations", file), "utf8");
+  console.log(`[prebuild] applying migration: ${file}`);
   await sql.unsafe(content);
+  await sql`insert into public._schema_migrations (name) values (${file}) on conflict do nothing`;
 }
+
+// Seed is always executed to keep config and task updates in sync
+const seedFile = "supabase/seed.sql";
+const seedContent = readFileSync(seedFile, "utf8");
+console.log(`[prebuild] applying ${seedFile}`);
+await sql.unsafe(seedContent);
 
 await sql.end();
 console.log("[prebuild] DB bootstrap done");
