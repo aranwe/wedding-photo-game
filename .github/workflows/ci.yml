@@ -47,12 +47,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Apply migrations + seed
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Push migrations
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: |
+          supabase link --project-ref btcamyokkmxlbyfqpggq
+          supabase db push --linked
+
+      - name: Seed
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
-        run: |
-          echo "$SUPABASE_DB_URL" | grep -q . || { echo "::error::SUPABASE_DB_URL secret is not set"; exit 1; }
-          for f in supabase/migrations/*.sql supabase/seed.sql; do
-            echo "--- applying $f"
-            psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f "$f"
-          done
+        run: psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f supabase/seed.sql
