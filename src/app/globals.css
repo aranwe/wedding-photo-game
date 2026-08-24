@@ -52,11 +52,12 @@
   /* Wedding theme colors — overridden at runtime from the `config` table. */
   --primary-rgb: 165 54 39; /* #a53627 maroon */
   --secondary-rgb: 165 54 39; /* #a53627 (single accent) */
+  --cream: #faf7f4;
   --primary: rgb(var(--primary-rgb));
   --primary-foreground: oklch(0.985 0 0);
-  --background: oklch(1 0 0);
+  --background: var(--cream);
   --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
+  --card: var(--cream);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
