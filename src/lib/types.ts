@@ -41,5 +41,11 @@ export interface EventConfig {
   subtitle: string;
 }
 
+export interface SlideshowConfig {
+  interval: number; // seconds, default 15
+  limit: number; // last N photos, default 10
+  aspectRatio: "16:9" | "4:3"; // default 16:9
+}
+
 /** Completion + viewing state for the wheel picker. */
 export type TaskState = "completed" | "in-progress" | "free";

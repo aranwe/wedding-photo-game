@@ -65,5 +65,27 @@
   "common": {
     "loading": "Načítám…",
     "back": "Zpět"
+  },
+  "slideshow": {
+    "noPhotos": "Zatím žádné nahrané fotky",
+    "waiting": "Čekáme na první fotky od hostů…",
+    "live": "ŽIVĚ"
+  },
+  "images": {
+    "title": "Všechny fotky ze svatby",
+    "totalCount": "Celkem fotek",
+    "filterAll": "Všechny",
+    "delete": "Smazat",
+    "deleteConfirm": "Opravdu chcete tuto fotku trvale smazat ze serveru?",
+    "edit": "Upravit",
+    "editTitle": "Upravit popisek fotky",
+    "save": "Uložit",
+    "cancel": "Zrušit",
+    "noPhotos": "Nebyly nalezeny žádné fotky",
+    "author": "Autor",
+    "team": "Tým",
+    "task": "Úkol",
+    "solo": "Sólo",
+    "backToGame": "Zpět do hry"
   }
 }
