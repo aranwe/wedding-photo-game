@@ -1,0 +1,69 @@
+{
+  "tabs": {
+    "game": "Hra",
+    "history": "Historie",
+    "settings": "Nastavení"
+  },
+  "onboarding": {
+    "title": "Vítej na svatbě! 🎉",
+    "subtitle": "Připoj se do foto hry",
+    "nameLabel": "Tvoje jméno",
+    "namePlaceholder": "např. Tereza",
+    "teamLabel": "Název týmu",
+    "teamPlaceholder": "např. Svědkové",
+    "joinButton": "Připojit se",
+    "soloButton": "Letím sólo",
+    "nameRequired": "Vyplň prosím jméno",
+    "teamRequired": "Vyplň tým, nebo let sólo",
+    "error": "Něco se pokazilo, zkus to znovu"
+  },
+  "game": {
+    "completed": "Splněno",
+    "inProgress": "někdo z týmu na tom pracuje",
+    "free": "Volné",
+    "cameraButton": "Vyfotit",
+    "uploadButton": "Nahrát fotku",
+    "noTasks": "Zatím tu nejsou žádné úkoly"
+  },
+  "camera": {
+    "shutter": "Vyfotit",
+    "cancel": "Zrušit",
+    "permissionDenied": "Bez přístupu ke kameře to nepůjde — zkus nahrát fotku ručně",
+    "notSupported": "Kamera tu není k dispozici — použij nahrání fotky",
+    "switchCamera": "Přepnout kameru"
+  },
+  "preview": {
+    "title": "Zkontroluj fotku",
+    "titleLabel": "Popisek",
+    "titlePlaceholder": "např. Děda jede moonwalk",
+    "save": "Uložit",
+    "delete": "Smazat",
+    "saving": "Ukládám…",
+    "saved": "Uloženo! Úkol splněn 🎉",
+    "saveError": "Uložení se nepovedlo, zkus to znovu"
+  },
+  "history": {
+    "empty": "Zatím žádné fotky",
+    "by": "od",
+    "delete": "Smazat",
+    "deleteConfirm": "Opravdu smazat tuto fotku?",
+    "confirm": "Ano, smazat",
+    "cancel": "Zrušit",
+    "editTitle": "Upravit popisek",
+    "saveTitle": "Uložit",
+    "untitled": "Bez popisku"
+  },
+  "settings": {
+    "loggedAs": "Přihlášen jako",
+    "team": "Tým",
+    "solo": "Sólo hráč",
+    "leaveTeam": "Opustit tým a registrovat se znovu",
+    "leaveConfirm": "Opravdu opustit tým? Tvoje fotky zůstanou.",
+    "confirm": "Ano, opustit",
+    "cancel": "Zrušit"
+  },
+  "common": {
+    "loading": "Načítám…",
+    "back": "Zpět"
+  }
+}
