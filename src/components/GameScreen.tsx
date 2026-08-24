@@ -32,13 +32,23 @@ export default function GameScreen({ identity }: { identity: Identity }) {
   const [capture, setCapture] = useState<Capture | null>(null);
 
   // ---------------------------------------------------------------- tasks
+  // Shuffled once per mount so each guest starts at a random task.
+  const [startIndex, setStartIndex] = useState(0);
   useEffect(() => {
     supabase
       .from("tasks")
       .select("*")
       .eq("active", true)
       .order("sort_order")
-      .then(({ data }) => setTasks((data as Task[]) ?? []));
+      .then(({ data }) => {
+        const list = [...((data as Task[]) ?? [])];
+        for (let i = list.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [list[i], list[j]] = [list[j], list[i]];
+        }
+        setTasks(list);
+        if (list.length) setStartIndex(Math.floor(Math.random() * list.length));
+      });
   }, []);
 
   // ------------------------------------------------- submissions + realtime
@@ -172,6 +182,7 @@ export default function GameScreen({ identity }: { identity: Identity }) {
                 states={states}
                 selectedId={selectedTaskId}
                 onSelect={setSelectedTaskId}
+                startIndex={startIndex}
               />
             )}
 

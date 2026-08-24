@@ -65,7 +65,7 @@ export default function Home() {
     <div className="flex flex-1 flex-col max-w-md mx-auto w-full px-4 pb-6">
       <header className="pt-6 pb-4 text-center">
         <h1 className="text-xl font-bold">
-          <span className="text-blue-700">{event.partner1}</span>{" "}
+          <span className="text-[var(--navy)]">{event.partner1}</span>{" "}
           <span className="text-[#5b612f]">{event.and}</span>{" "}
           <span className="text-primary">{event.partner2}</span>
         </h1>

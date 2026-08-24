@@ -54,6 +54,8 @@
   --secondary-rgb: 165 54 39; /* #a53627 (single accent) */
   --cream: #faf7f4;
   --green: #5b612f;
+  --navy: #000080;
+  --red: 
   --primary: rgb(var(--primary-rgb));
   --primary-foreground: oklch(0.985 0 0);
   --background: var(--cream);
