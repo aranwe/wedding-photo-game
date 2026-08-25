@@ -68,7 +68,7 @@ export default function CameraCapture({ onCapture, onCancel }: Props) {
 
   if (error) {
     return (
-      <div className="flex h-full flex-col items-center justify-center gap-4 px-6 text-center">
+      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-background px-6 text-center">
         <p className="text-sm text-muted-foreground">{error}</p>
         <Button variant="outline" onClick={onCancel}>
           {t("common.back")}
@@ -78,38 +78,61 @@ export default function CameraCapture({ onCapture, onCancel }: Props) {
   }
 
   return (
-    <div className="relative flex h-full min-h-[60vh] flex-col overflow-hidden rounded-2xl bg-black">
-      <video ref={videoRef} playsInline muted className="h-full w-full object-cover" />
+    <div className="fixed inset-0 z-50 flex flex-col justify-between overflow-hidden bg-black select-none">
+      {/* Fullscreen Video Viewfinder */}
+      <video
+        ref={videoRef}
+        playsInline
+        autoPlay
+        muted
+        className="absolute inset-0 h-full w-full object-cover"
+      />
 
-      <div className="absolute inset-x-0 bottom-0 flex items-center justify-center gap-6 bg-gradient-to-t from-black/60 to-transparent p-5">
+      {/* Top Floating Controls Header */}
+      <div className="relative z-10 flex items-center justify-between p-4 pt-6 bg-gradient-to-b from-black/70 via-black/30 to-transparent">
+        <div className="flex items-center gap-1.5 rounded-full bg-black/40 backdrop-blur-md px-3 py-1 text-xs text-white">
+          <Camera size={14} />
+          <span>{t("tabs.game")}</span>
+        </div>
+
         <Button
           variant="ghost"
           size="icon"
-          className="text-white hover:bg-white/20"
+          className="h-10 w-10 rounded-full bg-black/40 text-white backdrop-blur-md hover:bg-black/60 active:scale-95"
+          onClick={onCancel}
+          aria-label={t("camera.cancel")}
+        >
+          <X size={22} />
+        </Button>
+      </div>
+
+      {/* Bottom Floating Capture Controls */}
+      <div className="relative z-10 flex items-center justify-around px-8 pb-10 pt-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-12 w-12 rounded-full bg-white/10 text-white backdrop-blur-md hover:bg-white/20 active:scale-95"
           onClick={onCancel}
           aria-label={t("camera.cancel")}
         >
           <X size={24} />
         </Button>
+
         <button
           onClick={shoot}
           aria-label={t("camera.shutter")}
-          className="h-16 w-16 rounded-full border-4 border-white bg-white/30 transition-transform active:scale-90"
+          className="h-20 w-20 rounded-full border-4 border-white bg-white/30 transition-transform active:scale-90 shadow-lg"
         />
+
         <Button
           variant="ghost"
           size="icon"
-          className="text-white hover:bg-white/20"
+          className="h-12 w-12 rounded-full bg-white/10 text-white backdrop-blur-md hover:bg-white/20 active:scale-95"
           onClick={() => setFacing((f) => (f === "environment" ? "user" : "environment"))}
           aria-label={t("camera.switchCamera")}
         >
           <RefreshCw size={22} />
         </Button>
-      </div>
-
-      <div className="absolute left-3 top-3 flex items-center gap-1.5 rounded-full bg-black/50 px-3 py-1 text-xs text-white">
-        <Camera size={12} />
-        {t("tabs.game")}
       </div>
     </div>
   );

@@ -69,32 +69,38 @@ export default function SubmissionPreview({
   }
 
   return (
-    <div className="flex h-full flex-col gap-4">
+    <div className="flex h-full flex-col overflow-y-auto overscroll-contain pb-6 gap-4">
       <h2 className="text-lg font-semibold text-primary">{t("preview.title")}</h2>
 
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={previewUrl}
         alt={task.title_cs}
-        className="max-h-[45vh] w-full rounded-2xl object-contain bg-muted"
+        className="max-h-[35vh] w-full shrink-0 rounded-2xl object-contain bg-muted"
       />
 
-      <p className="text-sm font-medium text-center text-secondary-foreground">
+      <p className="text-sm font-medium text-center text-secondary-foreground shrink-0">
         {task.title_cs}
       </p>
 
-      <div className="space-y-1.5">
+      <div className="space-y-1.5 shrink-0">
         <Label htmlFor="submission-title">{t("preview.titleLabel")}</Label>
         <Input
           id="submission-title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          onFocus={(e) => {
+            // Scroll input smoothly into view when virtual keyboard pops up on mobile
+            setTimeout(() => {
+              e.target.scrollIntoView({ behavior: "smooth", block: "center" });
+            }, 300);
+          }}
           placeholder={t("preview.titlePlaceholder")}
           maxLength={120}
         />
       </div>
 
-      <div className="mt-auto grid grid-cols-2 gap-3 pt-2">
+      <div className="mt-auto grid grid-cols-2 gap-3 pt-2 shrink-0">
         <Button variant="outline" size="lg" onClick={onDone} disabled={busy}>
           {t("preview.delete")}
         </Button>
